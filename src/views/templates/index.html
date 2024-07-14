@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="container">
+        <h1>Sentiment Analysis</h1>
+        <form action="/analyze" method="post">
+            <textarea name="text" rows="4" cols="50" placeholder="Enter text here...">{{ text if text else '' }}</textarea><br>
+            <button type="submit">Analyze</button>
+        </form>
+        {% if sentiment %}
+            <p>Sentiment: {{ sentiment }}</p>
+        {% endif %}
+        {% if chart %}
+            <img src="data:image/png;base64,{{ chart }}" alt="Sentiment Analysis Chart">
+        {% endif %}
+    </div>
+    {% include 'footer.html' %}
+</body>
+</html>
