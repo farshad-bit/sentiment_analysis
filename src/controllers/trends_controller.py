@@ -1,21 +1,20 @@
-from flask import Blueprint, render_template
-import pandas as pd
+from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.services.database_service import DatabaseService
-from src.utils.chart_utils import create_trend_chart
 
-trends_blueprint = Blueprint('trends', __name__, template_folder='../views/templates')
-
+trends_blueprint = Blueprint('trends', __name__)
 db_service = DatabaseService()
 
-@trends_blueprint.route('/trends')
-def trends():
-    rows = db_service.fetch_all_sentiments()
-    df = pd.DataFrame(rows, columns=['id', 'text', 'sentiment', 'date'])
-    
-    df['date'] = pd.to_datetime(df['date'])
-    df.set_index('date', inplace=True)
+@trends_blueprint.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
-    # Generate trend chart
-    chart = create_trend_chart(df)
-
-    return render_template('trends.html', chart=chart)
+# این مسیر یک نمونه فرضی است
+@trends_blueprint.route('/api/trends', methods=['GET'])
+@jwt_required()
+def get_trends():
+    # فرض کنیم داده‌های مربوط به ترندها را از پایگاه داده می‌گیرید
+    trends_data = db_service.get_trends_data()
+    return jsonify(trends=trends_data), 200

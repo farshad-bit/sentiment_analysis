@@ -1,18 +1,13 @@
-from flask import Blueprint, request, render_template
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from src.models.sentiment_analyzer import SentimentAnalyzer
-from src.utils.chart_utils import create_chart
 
-analyze_blueprint = Blueprint('analyze', __name__, template_folder='../views/templates')
-
+analyze_blueprint = Blueprint('analyze', __name__)
 analyzer = SentimentAnalyzer()
 
-@analyze_blueprint.route('/analyze', methods=['POST'])
-def analyze():
-    text = request.form['text']
+@analyze_blueprint.route('/api/sentiment', methods=['POST'])
+@jwt_required()
+def analyze_sentiment():
+    text = request.json.get('text')
     sentiment = analyzer.analyze_sentiment(text)
-    results = analyzer.get_results()
-    
-    # Generate chart
-    chart = create_chart(results)
-
-    return render_template('index.html', text=text, sentiment=sentiment, chart=chart)
+    return jsonify(text=text, sentiment=sentiment), 200

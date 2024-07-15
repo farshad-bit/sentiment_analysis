@@ -1,36 +1,48 @@
-# sentiment_analysis/src/api/sentiment_api.py
-
 import sys
 import os
-from flask import Flask, request
-from flask_restful import Resource, Api
+from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-# افزودن مسیر src به sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+# اضافه کردن مسیر پروژه به مسیرهای جستجوی Python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 from src.models.sentiment_analyzer import SentimentAnalyzer
+from src.services.database_service import DatabaseService
+from config import Config
 
 app = Flask(__name__)
-api = Api(app)
+app.config.from_object(Config)
+
+jwt = JWTManager(app)
 
 analyzer = SentimentAnalyzer()
-
-class SentimentAnalysisAPI(Resource):
-    def post(self):
-        data = request.get_json()
-        text = data.get('text')
-        
-        if not text:
-            return {'error': 'Text is required for sentiment analysis.'}, 400
-        
-        sentiment = analyzer.analyze_sentiment(text)
-        return {'text': text, 'sentiment': sentiment}, 200
-
-api.add_resource(SentimentAnalysisAPI, '/api/sentiment')
+db_service = DatabaseService()
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Sentiment Analysis API is running."
+    return "Welcome to the Sentiment Analysis API", 200
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    access_token = create_access_token(identity=username)
+    return jsonify(access_token=access_token), 200
+
+@app.route('/api/sentiment', methods=['POST'])
+@jwt_required()
+def analyze_sentiment():
+    text = request.json.get('text')
+    if not text:
+        return jsonify({"msg": "No text provided"}), 400
+    sentiment = analyzer.analyze_sentiment(text)
+    return jsonify(text=text, sentiment=sentiment), 200
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,8 +1,7 @@
-from flask import render_template
-from flask import Blueprint
+from flask import Blueprint, jsonify
 
-home_blueprint = Blueprint('home', __name__, template_folder='../views/templates')
+home_blueprint = Blueprint('home', __name__)
 
-@home_blueprint.route('/')
+@home_blueprint.route('/', methods=['GET'])
 def home():
-    return render_template('index.html')
+    return "Welcome to the Sentiment Analysis API", 200

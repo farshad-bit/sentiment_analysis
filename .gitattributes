@@ -1,1 +1,13 @@
-"* text=auto" 
+# Handle line endings automatically for files detected as text
+* text=auto
+
+# Explicitly declare text files we want to always be normalized and converted to native line endings
+*.py text
+*.html text
+*.css text
+*.js text
+
+# Declare binary files to be untouched by Git's end-of-line normalization
+*.png binary
+*.jpg binary
+*.gif binary
