@@ -1,13 +1,22 @@
-from flask import Flask
-from src.api.sentiment_api import create_api
-from config import Config
+# app.py
+from flask import Flask, redirect, url_for
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from src.config import Config
+from src.controllers.routes import main_blueprint
+from src.api.sentiment_api import sentiment_api
 
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    create_api(app)
-    return app
+app = Flask(__name__, template_folder='src/views/templates', static_folder='src/views/static')
+app.config.from_object(Config)
+jwt = JWTManager(app)
+CORS(app, supports_credentials=True)
+
+app.register_blueprint(main_blueprint)
+app.register_blueprint(sentiment_api, url_prefix='/api')
+
+@app.route('/')
+def index():
+    return redirect(url_for('main.auth.login'))
 
 if __name__ == '__main__':
-    app = create_app()
     app.run(debug=True)

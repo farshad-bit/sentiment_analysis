@@ -1,36 +1,34 @@
-import sqlite3
+# src/services/database_service.py
+import mysql.connector
+from mysql.connector import Error
 
 class DatabaseService:
-    def __init__(self, db_name='sentiment_analysis.db'):
-        self.db_name = db_name
-        self.initialize_db()
+    def __init__(self):
+        try:
+            self.connection = mysql.connector.connect(
+                host='localhost',
+                port=3307,
+                database='sentiment_analysis',
+                user='root',
+                password='Farshad7013'
+            )
+            if self.connection.is_connected():
+                db_Info = self.connection.get_server_info()
+                print("Connected to MySQL Server version ", db_Info)
+        except Error as e:
+            print("Error while connecting to MySQL", e)
 
-    def initialize_db(self):
-        conn = sqlite3.connect(self.db_name)
-        c = conn.cursor()
+    def insert_sentiment(self, text, sentiment):
+        try:
+            cursor = self.connection.cursor()
+            query = "INSERT INTO sentiments (text, sentiment) VALUES (%s, %s)"
+            cursor.execute(query, (text, sentiment))
+            self.connection.commit()
+            cursor.close()
+        except Error as e:
+            print("Failed to insert record into MySQL table", e)
 
-        # ایجاد جدول
-        c.execute('''CREATE TABLE IF NOT EXISTS sentiments
-                     (id INTEGER PRIMARY KEY AUTOINCREMENT, 
-                      text TEXT, 
-                      sentiment TEXT, 
-                      date TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
-
-        conn.commit()
-        conn.close()
-
-    def save_sentiment(self, text, sentiment):
-        conn = sqlite3.connect(self.db_name)
-        c = conn.cursor()
-        # استفاده از پارامترهای جایگزین برای جلوگیری از SQL Injection
-        c.execute("INSERT INTO sentiments (text, sentiment) VALUES (?, ?)", (text, sentiment))
-        conn.commit()
-        conn.close()
-
-    def fetch_all_sentiments(self):
-        conn = sqlite3.connect(self.db_name)
-        c = conn.cursor()
-        c.execute("SELECT * FROM sentiments")
-        rows = c.fetchall()
-        conn.close()
-        return rows
+    def __del__(self):
+        if self.connection.is_connected():
+            self.connection.close()
+            print("MySQL connection is closed")

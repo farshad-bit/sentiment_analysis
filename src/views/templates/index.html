@@ -1,26 +1,28 @@
+<!-- src/views/templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentiment Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     {% include 'header.html' %}
-    <div class="container">
-        <h1>Sentiment Analysis</h1>
-        <form action="/analyze" method="post">
-            <textarea name="text" rows="4" cols="50" placeholder="Enter text here...">{{ text if text else '' }}</textarea><br>
-            <button type="submit">Analyze</button>
-        </form>
-        {% if sentiment %}
-            <p>Sentiment: {{ sentiment }}</p>
-        {% endif %}
-        {% if chart %}
-            <img src="data:image/png;base64,{{ chart }}" alt="Sentiment Analysis Chart">
-        {% endif %}
-    </div>
+    <h1>Sentiment Analysis</h1>
+    <form id="sentiment-form">
+        <textarea id="text-input" name="text" placeholder="Enter text here..."></textarea>
+        <button type="button" onclick="analyzeSentiment()">Analyze Sentiment</button>
+    </form>
+
+    <h2>Result</h2>
+    <p><strong>Text:</strong> <span id="result-text">N/A</span></p>
+    <p><strong>Sentiment:</strong> <span id="result-sentiment">N/A</span></p>
+
+    <h1>Options</h1>
+    <button type="button" onclick="window.location.href='/trends'">Trends</button>
+    <button type="button" onclick="window.location.href='/advanced'">Advanced Sentiment Analysis</button>
+
     {% include 'footer.html' %}
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
 </body>
 </html>

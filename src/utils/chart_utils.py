@@ -1,46 +1,24 @@
-import matplotlib
-matplotlib.use('Agg')  # Use Agg backend for matplotlib
-
+# src/utils/chart_utils.py
 import matplotlib.pyplot as plt
-import seaborn as sns
 import io
 import base64
 
-def create_chart(results):
-    labels = list(results.keys())
-    values = list(results.values())
+def create_sentiment_chart(sentiments):
+    # تعیین رنگ‌ها و برچسب‌ها برای نمودار
+    labels = ['Positive', 'Negative', 'Neutral']
+    sizes = [sentiments.get(label.lower(), 0) for label in labels]
+    colors = ['#00ff00', '#ff0000', '#0000ff']
 
-    plt.figure(figsize=(10, 5))
-    sns.barplot(x=labels, y=values)
-    plt.title('Sentiment Analysis Results')
-    plt.xlabel('Sentiment')
-    plt.ylabel('Count')
+    # ایجاد نمودار پای
+    fig, ax = plt.subplots()
+    ax.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+    ax.axis('equal')  # برابر نگه داشتن نسبت‌ها
 
-    # Save the plot to a PNG image in memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    chart = base64.b64encode(buf.getvalue()).decode('utf8')
-    buf.close()
+    # تبدیل نمودار به تصویر پایه 64
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    chart_url = base64.b64encode(img.getvalue()).decode('utf8')
     plt.close()
 
-    return chart
-
-def create_trend_chart(df):
-    sentiment_counts = df.resample('D').size()
-
-    plt.figure(figsize=(10, 5))
-    sentiment_counts.plot()
-    plt.title('Sentiment Analysis Trends Over Time')
-    plt.xlabel('Date')
-    plt.ylabel('Count')
-
-    # Save the plot to a PNG image in memory
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    buf.seek(0)
-    chart = base64.b64encode(buf.getvalue()).decode('utf8')
-    buf.close()
-    plt.close()
-
-    return chart
+    return f'data:image/png;base64,{chart_url}'

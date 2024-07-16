@@ -1,0 +1,50 @@
+sentiment_analysis/
+├── app.py
+├── src/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── api/
+│   │   └── sentiment_api.py
+│   │   └── __init__.py
+│   ├── controllers/
+│   │   └── advanced_controller.py
+│   │   └── routes.py
+│   │   └── analyze_controller.py
+│   │   └── auth_controller.py
+│   │   └── home_controller.py
+│   │   └── trends_controller.py
+│   ├── models/
+│   │   ├── sentiment_analyzer.py
+│   │   ├── advanced_sentiment_analyzer.py
+│   │   └── topic_classifier.py
+│   │   └── trend_analyzer.py
+│   ├── services/
+│   │   └── database_service.py
+│   ├── utils/
+│   │   └── chart_utils.py
+│   ├── views/
+│   │   ├── templates/
+│   │   │   ├── advanced_sentiment.html
+│   │   │   ├── index.html
+│   │   │   ├── header.html
+│   │   │   └── footer.html
+│   │   │   └── trends.html
+│   │   │   └── login.html
+│   │   └── static/
+│   │       ├── css/
+│   │       │   └── styles.css
+│   │       └── js/
+│   │           ├── advanced_sentiment.js
+│   │           ├── main.js
+│   │           └── api.js
+│   │           └── trnds.js
+│   │           └── login.js
+│   │       ├── favicon.ico
+├── requirements.txt
+├── .gitignore
+├── .gitattributes
+└── venv/
+
+docker run --name mysql-container -e MYSQL_ROOT_PASSWORD= -e MYSQL_DATABASE=sentiment_analysis -p 3306:3306 -d mysql:latest
+
+
