@@ -32,3 +32,23 @@ class DatabaseService:
         if self.connection.is_connected():
             self.connection.close()
             print("MySQL connection is closed")
+    
+    def get_trends(self):
+        try:
+            cursor = self.connection.cursor(dictionary=True)
+            query = "SELECT sentiment, COUNT(*) as count FROM sentiments GROUP BY sentiment"
+            cursor.execute(query)
+            trends = cursor.fetchall()
+            cursor.close()
+            return trends
+        except Error as e:
+            print("Failed to fetch records from MySQL table", e)
+            return []
+
+def save_sentiment(text, sentiment):
+    db_service = DatabaseService()
+    db_service.insert_sentiment(text, sentiment)
+
+def get_trends():
+    db_service = DatabaseService()
+    return db_service.get_trends()

@@ -5,6 +5,7 @@ from flask_cors import CORS
 from src.config import Config
 from src.controllers.routes import main_blueprint
 from src.api.sentiment_api import sentiment_api
+from src.controllers.trends_controller import trends_blueprint
 
 app = Flask(__name__, template_folder='src/views/templates', static_folder='src/views/static')
 app.config.from_object(Config)
@@ -13,6 +14,7 @@ CORS(app, supports_credentials=True)
 
 app.register_blueprint(main_blueprint)
 app.register_blueprint(sentiment_api, url_prefix='/api')
+app.register_blueprint(trends_blueprint, url_prefix='/trends')
 
 @app.route('/')
 def index():

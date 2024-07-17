@@ -1,7 +1,6 @@
 // src/views/static/js/trends.js
 
 async function fetchTrends() {
-    // واکشی توکن JWT از کوکی‌ها
     const token = document.cookie.split('; ').find(row => row.startsWith('access_token=')).split('=')[1];
 
     if (!token) {
@@ -9,29 +8,37 @@ async function fetchTrends() {
         return;
     }
 
-    // ارسال درخواست به سرور برای واکشی روندها
-    const response = await fetch('/api/trends', {
+    const response = await fetch('/trends/data', {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         }
     });
 
+    if (response.status === 404) {
+        alert('API endpoint not found.');
+        return;
+    }
+
+    if (response.status === 401) {
+        alert('Unauthorized. Please log in again.');
+        return;
+    }
+
     if (response.ok) {
         const trends = await response.json();
-        const labels = trends.map(trend => trend.name);
-        const values = trends.map(trend => trend.value);
+        
+        const trendNames = trends.map(trend => trend.sentiment);
+        const trendValues = trends.map(trend => trend.count);
 
-        // ایجاد نمودار با استفاده از Chart.js
         const ctx = document.getElementById('trendsChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar', // نوع نمودار
+            type: 'bar', // 'line', 'pie', etc.
             data: {
-                labels: labels,
+                labels: trendNames,
                 datasets: [{
-                    label: 'Trends',
-                    data: values,
+                    label: 'Trend Values',
+                    data: trendValues,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
@@ -46,8 +53,10 @@ async function fetchTrends() {
             }
         });
     } else {
-        alert('Error fetching trends: ' + response.statusText);
+        alert('Error fetching trends');
     }
 }
 
-fetchTrends();
+document.addEventListener('DOMContentLoaded', function() {
+    fetchTrends();
+});
