@@ -45,6 +45,6 @@ sentiment_analysis/
 ├── .gitattributes
 └── venv/
 
-docker run --name mysql-container -e MYSQL_ROOT_PASSWORD= -e MYSQL_DATABASE=sentiment_analysis -p 3306:3306 -d mysql:latest
+
 
 

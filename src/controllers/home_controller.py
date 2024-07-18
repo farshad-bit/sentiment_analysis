@@ -1,4 +1,7 @@
 # src/controllers/home_controller.py
+# این فایل برای مسیریابی و مدیریت درخواست‌های مربوط به نمایش صفحات مختلف برنامه است
+
+
 from flask import Blueprint, render_template, redirect, url_for
 from flask_jwt_extended import jwt_required
 

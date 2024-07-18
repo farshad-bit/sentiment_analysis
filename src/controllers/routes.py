@@ -1,4 +1,6 @@
 # src/controllers/routes.py
+# این فایل برای ثبت همه بلوپرینت‌های مختلف برنامه در یک بلوپرینت اصلی است
+
 from flask import Blueprint
 from src.controllers.home_controller import home_blueprint
 from src.controllers.analyze_controller import analyze_blueprint
@@ -13,3 +15,5 @@ main_blueprint.register_blueprint(analyze_blueprint, url_prefix='/analyze')
 main_blueprint.register_blueprint(trends_blueprint, url_prefix='/trends')
 main_blueprint.register_blueprint(auth_blueprint, url_prefix='/auth')
 main_blueprint.register_blueprint(advanced_blueprint, url_prefix='/advanced')
+
+

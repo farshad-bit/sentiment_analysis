@@ -1,7 +1,9 @@
 # src/models/sentiment_analyzer.py
+# این فایل برای تحلیل احساسات استفاده می‌شود
+
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from langdetect import detect
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 from src.services.database_service import DatabaseService
 
 class SentimentAnalyzer:
@@ -15,13 +17,11 @@ class SentimentAnalyzer:
             language = detect(text)
             print(f"Detected language: {language}")
             if language != 'en':
-                translator = Translator()
-                translation = translator.translate(text, dest='en')
-                if translation is None or translation.text is None:
+                translation = GoogleTranslator(source='auto', target='en').translate(text)
+                if not translation:
                     raise ValueError("Translation failed")
-                translated_text = translation.text
-                print(f"Translated text: {translated_text}")
-                text = translated_text
+                print(f"Translated text: {translation}")
+                text = translation
 
             # تحلیل احساسات
             sentiment = self.analyzer.polarity_scores(text)

@@ -1,4 +1,3 @@
-<!-- src/views/templates/advanced_sentiment.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,15 +9,13 @@
     {% include 'header.html' %}
     <h1>Advanced Sentiment Analysis</h1>
     <form id="advanced-sentiment-form">
-        <textarea id="advanced-text-input" name="text" placeholder="Enter text here..."></textarea>
-        <button type="button" onclick="analyzeAdvancedSentiment()">Analyze Advanced Sentiment</button>
+        <textarea id="text-input" name="text" placeholder="Enter text here..."></textarea>
+        <button type="submit">Analyze Sentiment</button>
     </form>
 
     <h2>Result</h2>
-    <p><strong>Original Text:</strong> <span id="advanced-result-original-text">N/A</span></p>
-    <p><strong>Translated Text:</strong> <span id="advanced-result-translated-text">N/A</span></p>
-    <p><strong>Sentiment:</strong> <span id="advanced-result-sentiment">N/A</span></p>
-    <p><strong>Score:</strong> <span id="advanced-result-score">N/A</span></p>
+    <p><strong>Translated Text:</strong> <span id="result-text">N/A</span></p>
+    <p><strong>Sentiment:</strong> <span id="result-sentiment">N/A</span></p>
 
     {% include 'footer.html' %}
     <script src="{{ url_for('static', filename='js/advanced_sentiment.js') }}"></script>

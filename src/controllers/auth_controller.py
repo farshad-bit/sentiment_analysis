@@ -20,7 +20,13 @@ def login():
 
     expires = datetime.timedelta(days=1)
     access_token = create_access_token(identity=username, expires_delta=expires)
+    csrf_token = get_csrf_token(access_token)
     response = make_response(redirect(url_for('main.home.input_page')))
     set_access_cookies(response, access_token)
-    response.set_cookie('csrf_access_token', get_csrf_token(access_token))
+    response.set_cookie('csrf_access_token', csrf_token, httponly=False, samesite='Lax')
+
+    # Debug statements
+    logging.info(f"Access Token: {access_token}")
+    logging.info(f"CSRF Token: {csrf_token}")
+
     return response

@@ -11,7 +11,7 @@
     <h1>Sentiment Analysis</h1>
     <form id="sentiment-form">
         <textarea id="text-input" name="text" placeholder="Enter text here..."></textarea>
-        <button type="button" onclick="analyzeSentiment()">Analyze Sentiment</button>
+        <button type="button" id="analyze-button">Analyze Sentiment</button>
     </form>
 
     <h2>Result</h2>
@@ -23,6 +23,6 @@
     <button type="button" onclick="window.location.href='/advanced'">Advanced Sentiment Analysis</button>
 
     {% include 'footer.html' %}
-    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sentiment_analyze.js') }}"></script>
 </body>
 </html>

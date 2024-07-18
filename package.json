@@ -1,0 +1,22 @@
+{
+  "name": "sentiment_analysis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "fetch-mock": "^10.0.8",
+    "jest": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
+    "jsdom": "^16.4.0",
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-react": "^7.14.5",
+    "babel-jest": "^27.3.1"
+  }
+}

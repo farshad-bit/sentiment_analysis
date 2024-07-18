@@ -1,0 +1,62 @@
+sentiment_analysis/
+├── app.py
+├── src/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── api/
+│   │   └── sentiment_api.py
+│   │   └── __init__.py
+│   ├── controllers/
+│   │   └── advanced_controller.py
+│   │   └── routes.py
+│   │   └── analyze_controller.py
+│   │   └── auth_controller.py
+│   │   └── home_controller.py
+│   │   └── trends_controller.py
+│   ├── models/
+│   │   ├── sentiment_analyzer.py
+│   │   ├── advanced_sentiment_analyzer.py
+│   │   └── topic_classifier.py
+│   │   └── trend_analyzer.py
+│   ├── services/
+│   │   └── database_service.py
+│   ├── utils/
+│   │   └── chart_utils.py
+│   ├── views/
+│   │   ├── templates/
+│   │   │   ├── advanced_sentiment.html
+│   │   │   ├── index.html
+│   │   │   ├── header.html
+│   │   │   └── footer.html
+│   │   │   └── trends.html
+│   │   │   └── login.html
+│   │   └── static/
+│   │       ├── css/
+│   │       │   └── styles.css
+│   │       └── js/
+│   │           ├── advanced_sentiment.js
+│   │           ├── main.js
+│   │           └── api.js
+│   │           └── trnds.js
+│   │           └── login.js
+│   │       ├── favicon.ico
+├── tests/
+│   ├── test_sentiment_analyzer.py
+│   ├── test_advanced_sentiment_analyzer.py
+│   ├── test_topic_classifier.py
+│   ├── test_trend_analyzer.py
+│   ├── test_advanced_controller.py
+│   ├── test_routes.py
+│   ├── test_analyze_controller.py
+│   ├── test_auth_controller.py
+│   ├── test_home_controller.py
+│   ├── test_trends_controller.py
+│   └── test_database_service.py
+├── requirements.txt
+├── .gitignore
+├── .gitattributes
+└── venv/
+
+
+
+

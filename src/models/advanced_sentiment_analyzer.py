@@ -1,38 +1,55 @@
 # src/models/advanced_sentiment_analyzer.py
-from transformers import pipeline
-from googletrans import Translator
+# این فایل برای تحلیل پیشرفته احساسات استفاده می‌شود
+
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+from langdetect import detect
+from deep_translator import GoogleTranslator
+from src.services.database_service import DatabaseService
 
 class AdvancedSentimentAnalyzer:
     def __init__(self):
-        self.analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-        self.translator = Translator()
+        self.analyzer = SentimentIntensityAnalyzer()
+        self.db_service = DatabaseService()
+
+    def translate_text(self, text, target_language='en'):
+        try:
+            translated_text = GoogleTranslator(source='auto', target=target_language).translate(text)
+            return translated_text
+        except Exception as e:
+            print(f"Translation error: {e}")
+            return None
 
     def analyze_sentiment(self, text):
-        # Translate the text to English
-        translation = self.translator.translate(text, dest='en').text
+        try:
+            # تشخیص زبان
+            language = detect(text)
+            print(f"Detected language: {language}")  # Debugging log
+            translated_text = text
+            if language != 'en':
+                translated_text = self.translate_text(text)
+                if not translated_text:
+                    raise ValueError("Translation failed")
+                print(f"Translated text: {translated_text}")  # Debugging log
 
-        # Analyze the sentiment of the translated text
-        sentiment = self.analyzer(translation)
+            # تحلیل احساسات
+            sentiment = self.analyzer.polarity_scores(translated_text)
+            print(f"Sentiment scores: {sentiment}")  # Debugging log
+            compound = sentiment['compound']
+            if compound >= 0.5:
+                sentiment_result = 'Very Positive'
+            elif 0.2 < compound < 0.5:
+                sentiment_result = 'Positive'
+            elif -0.2 <= compound <= 0.2:
+                sentiment_result = 'Neutral'
+            elif -0.5 < compound < -0.2:
+                sentiment_result = 'Negative'
+            else:
+                sentiment_result = 'Very Negative'
 
-        # Get the sentiment label and score
-        label = sentiment[0]['label']
-        score = sentiment[0]['score']
+            # ذخیره در دیتابیس
+            self.db_service.insert_sentiment(translated_text, sentiment_result)
 
-        # Determine sentiment result based on the label
-        if label == "1 star":
-            sentiment_result = "Very Bad"
-        elif label == "2 stars":
-            sentiment_result = "Bad"
-        elif label == "3 stars":
-            sentiment_result = "Neutral"
-        elif label == "4 stars":
-            sentiment_result = "Good"
-        elif label == "5 stars":
-            sentiment_result = "Very Good"
-
-        return {
-            'original_text': text,
-            'translated_text': translation,
-            'sentiment': sentiment_result,
-            'score': score
-        }
+            return {'sentiment': sentiment_result, 'translated_text': translated_text}
+        except Exception as e:
+            print(f"Error: {e}")
+            return {'error': str(e)}

@@ -1,4 +1,3 @@
-# src/services/database_service.py
 import mysql.connector
 from mysql.connector import Error
 
@@ -28,27 +27,19 @@ class DatabaseService:
         except Error as e:
             print("Failed to insert record into MySQL table", e)
 
-    def __del__(self):
-        if self.connection.is_connected():
-            self.connection.close()
-            print("MySQL connection is closed")
-    
     def get_trends(self):
         try:
             cursor = self.connection.cursor(dictionary=True)
-            query = "SELECT sentiment, COUNT(*) as count FROM sentiments GROUP BY sentiment"
+            query = "SELECT * FROM sentiments"
             cursor.execute(query)
             trends = cursor.fetchall()
             cursor.close()
             return trends
         except Error as e:
-            print("Failed to fetch records from MySQL table", e)
+            print("Failed to retrieve records from MySQL table", e)
             return []
 
-def save_sentiment(text, sentiment):
-    db_service = DatabaseService()
-    db_service.insert_sentiment(text, sentiment)
-
-def get_trends():
-    db_service = DatabaseService()
-    return db_service.get_trends()
+    def __del__(self):
+        if self.connection.is_connected():
+            self.connection.close()
+            print("MySQL connection is closed")

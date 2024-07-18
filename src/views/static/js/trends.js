@@ -1,62 +1,75 @@
 // src/views/static/js/trends.js
-
-async function fetchTrends() {
-    const token = document.cookie.split('; ').find(row => row.startsWith('access_token=')).split('=')[1];
-
-    if (!token) {
-        alert('Please log in to get a JWT token first.');
-        return;
-    }
-
-    const response = await fetch('/trends/data', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    if (response.status === 404) {
-        alert('API endpoint not found.');
-        return;
-    }
-
-    if (response.status === 401) {
-        alert('Unauthorized. Please log in again.');
-        return;
-    }
-
+document.addEventListener('DOMContentLoaded', async function () {
+    const response = await fetch('/trends/data');
     if (response.ok) {
         const trends = await response.json();
-        
-        const trendNames = trends.map(trend => trend.sentiment);
-        const trendValues = trends.map(trend => trend.count);
 
-        const ctx = document.getElementById('trendsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar', // 'line', 'pie', etc.
-            data: {
-                labels: trendNames,
-                datasets: [{
-                    label: 'Trend Values',
-                    data: trendValues,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
+        const categories = {
+            'Very Good': 0,
+            'Good': 0,
+            'Neutral': 0,
+            'Bad': 0,
+            'Very Bad': 0
+        };
+
+        trends.forEach(trend => {
+            if (trend.sentiment.toLowerCase() === 'positive') {
+                if (trend.text.includes('very')) {
+                    categories['Very Good']++;
+                } else {
+                    categories['Good']++;
+                }
+            } else if (trend.sentiment.toLowerCase() === 'negative') {
+                if (trend.text.includes('very')) {
+                    categories['Very Bad']++;
+                } else {
+                    categories['Bad']++;
+                }
+            } else {
+                categories['Neutral']++;
+            }
+        });
+
+        const data = {
+            labels: Object.keys(categories),
+            datasets: [{
+                label: 'Trends',
+                data: Object.values(categories),
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(201, 203, 207, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(201, 203, 207, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
             options: {
                 scales: {
                     y: {
                         beginAtZero: true
                     }
                 }
-            }
-        });
-    } else {
-        alert('Error fetching trends');
-    }
-}
+            },
+        };
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchTrends();
+        const trendsChart = new Chart(
+            document.getElementById('trendsChart'),
+            config
+        );
+    } else {
+        alert('Failed to fetch trends data');
+    }
 });

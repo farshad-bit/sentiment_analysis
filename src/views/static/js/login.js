@@ -1,5 +1,13 @@
 // src/views/static/js/login.js
-async function login() {
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('login-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        loginUser();
+    });
+});
+
+async function loginUser() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
 
@@ -8,14 +16,12 @@ async function login() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username: username, password: password })
     });
 
     if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('jwtToken', data.access_token);
         window.location.href = '/home/input';
     } else {
-        alert('Login failed');
+        alert('Login failed. Please check your username and password.');
     }
 }

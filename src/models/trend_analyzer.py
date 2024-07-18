@@ -1,30 +1,27 @@
 # src/models/trend_analyzer.py
-import mysql.connector
-import matplotlib.pyplot as plt
+# این فایل برای تحلیل روندهای موجود در داده‌ها استفاده می‌شود
 
-def get_db_connection():
-    return mysql.connector.connect(
-        host='127.0.0.1',
-        port=3307,
-        user='root',
-        password='Farshad7013',
-        database='sentiment_analysis'
-    )
+import pandas as pd
+import numpy as np
+from src.services.database_service import DatabaseService
 
-def plot_trends():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    query = "SELECT sentiment, COUNT(*) as count FROM sentiments GROUP BY sentiment"
-    cursor.execute(query)
-    results = cursor.fetchall()
-    cursor.close()
-    conn.close()
+class TrendAnalyzer:
+    def __init__(self):
+        self.db_service = DatabaseService()
 
-    sentiments = [row[0] for row in results]
-    counts = [row[1] for row in results]
+    def analyze_trends(self, data):
+        try:
+            # تبدیل داده‌ها به دیتافریم
+            df = pd.DataFrame(data)
+            
+            # تحلیل روندها
+            trends = df.groupby('category').size().reset_index(name='counts')
+            trends['trend'] = trends['counts'].pct_change().fillna(0)
+            
+            # ذخیره نتیجه در دیتابیس
+            self.db_service.insert_trends(trends.to_dict('records'))
 
-    plt.bar(sentiments, counts)
-    plt.xlabel('Sentiment')
-    plt.ylabel('Count')
-    plt.title('Sentiment Analysis Trends')
-    plt.show()
+            return trends.to_dict('records')
+        except Exception as e:
+            print(f"Error: {e}")
+            return str(e)
